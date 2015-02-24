@@ -76,8 +76,8 @@ Evolution.prototype.selection = function(array){
 
 Evolution.prototype.recombination = function(array){
 	var singlepoint = Math.floor(Math.random() * 11 );
-	var first = Math.floor(Math.random() * (array.length + 1 ));
-	var second = Math.floor(Math.random() * (array.length + 1 ));
+	var first = Math.floor(Math.random() * (array.length));
+	var second = Math.floor(Math.random() * (array.length));
 	var substring1 = array[first].binary.substring(0,singlepoint);
 	var substring2 = array[second].binary.substring(0,singlepoint);
 	array[first].binary = substring2 + array[first].binary.substring(singlepoint,10);
