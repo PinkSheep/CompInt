@@ -1,4 +1,4 @@
-	"use strict";
+"use strict";
 var Individual = function(binary){
 	this.h = null;
 	this.d = null;

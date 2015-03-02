@@ -1,4 +1,4 @@
-	"use strict";
+"use strict";
 var Evolution = function(){
 	this.besth = null;
 	this.bestd = null;
@@ -11,21 +11,18 @@ Evolution.prototype.iterate = function(){
 	var labelData = new Array();
 	for (var i = 0;i<100;i++){
 		if(i==0){
-			var array = this.generateArray();
-			array = this.evaluate(array);
+			this.generateArray();
+			this.evaluate();
 		}
 		
-		array = this.selection(array);
+		this.selection();
+		this.evaluate();
 		for (var i2 = 0;i2<5;i2++){
-			array=this.recombination(array);
+			this.recombination();
 		}
-		array = this.mutation(array);
-		array = this.evaluate(array);
-		var bestIndex = this.selectBest(array);
-		this.best = array[bestIndex].f;
-		this.h = array[bestIndex].h;
-		this.d = array[bestIndex].d;
-		console.log("Best:"+this.best+" h:"+this.h+" d:"+this.d);
+		this.mutation();
+		this.selectBest();
+		console.log("Best:"+this.best+" h:"+this.besth+" d:"+this.bestd);
 		chartData.push(this.best);
 		labelData.push(i);
 	}
@@ -47,42 +44,39 @@ Evolution.prototype.iterate = function(){
 	};	
 	var myLineChart = new Chart(ctx).Line(data,options);
 
-
-	return array;
-
 }
 
 Evolution.prototype.selectBest = function(){
 	var bestNum = null;
 	var indexVal = null;
-	for(var i = 0;i<this.individuals.length;i++){
-		if(bestNum==null&&this.individuals[i].select){
-			bestNum = this.individuals[i].f;
-			indexVal = i;
+	for(var i4 = 0;i4<this.individuals.length;i4++){
+		if(bestNum==null&&this.individuals[i4].select){
+			indexVal = i4;
+			bestNum = this.individuals[i4].f;
 		} else {
-			if(this.individuals[i].f<bestNum&&this.individuals[i].select){
-				bestNum=this.individuals[i].f;
-				indexVal=i;
+			if(this.individuals[i4].f<bestNum&&this.individuals[i4].select){
+				indexVal=i4;
+				bestNum = this.individuals[i4].f;
 			}
 
 		}
 	}
-	this.best=this.individuals[bestIndex].f;
-	this.besth=this.individuals[bestIndex].h;
-	this.bestd=this.individuals[bestIndex].d;
+	this.best=this.individuals[indexVal].f;
+	this.besth=this.individuals[indexVal].h;
+	this.bestd=this.individuals[indexVal].d;
 }
 
 Evolution.prototype.generateArray = function(){
 	var array = new Array();
-	for(var i = 0;i<30;i++){
-		array[i] = new Individual(this.returnBinary());
+	for(var i9 = 0;i9<30;i9++){
+		array[i9] = new Individual(this.returnBinary());
 	};
 	this.individuals = array;
 }
 
 Evolution.prototype.returnBinary = function(){
 	var arr = new Array();
-	for(var i=0;i<10;i++){
+	for(var i8=0;i8<10;i8++){
 		arr.push(Math.floor(Math.random()*2)); 
 	}
 	return arr.join('');
@@ -103,7 +97,7 @@ Evolution.prototype.selection = function(){
 	var selArray = rangArray.sort(this.compareForSort);
 	var total = this.calculateTotalRang(selArray.length);
 	var newIndividuals = new Array();
-	for (var i = 0;i<30;i++){
+	for (var i5 = 0;i5<30;i5++){
 		var ind = this.rankBasedSelection(selArray.length,total,Math.random());	
 		newIndividuals.push(new Individual(selArray[ind].binary));
 	}
@@ -125,9 +119,9 @@ Evolution.prototype.recombination = function(){
 Evolution.prototype.mutation = function(){
 	for (var index = 0;index<this.individuals.length;index++){
 		var stringArr = this.individuals[index].binary.split('');
-		for(var i = 0;i<stringArr.length;i++){
+		for(var i3 = 0;i3<stringArr.length;i3++){
 			if (Math.random()< 0.01){
-				stringArr[i] == "1"?stringArr[i]="0":stringArr[i]="1";
+				stringArr[i3] == "1"?stringArr[i3]="0":stringArr[i3]="1";
 			}
 		}
 		this.individuals[index].binary = stringArr.join('');
@@ -136,18 +130,18 @@ Evolution.prototype.mutation = function(){
 
 Evolution.prototype.rankBasedSelection = function(length,total,value){
 	var teilSum = 0;
-	for(var i = 0;i<length;i++){
-		teilSum += (i+1)/total;
+	for(var i6 = 0;i6<length;i6++){
+		teilSum += (i6+1)/total;
 		if (value<teilSum){
-			return i;
+			return i6;
 		}
 
 	}
 }
 Evolution.prototype.calculateTotalRang = function(value){
 	var tot = 0;
-	for (var i = 0;i<value;i++){
-		tot += i + 1;
+	for (var i7 = 0;i7<value;i7++){
+		tot += i7 + 1;
 	};
 	return tot;
 }
