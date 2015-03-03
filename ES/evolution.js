@@ -4,7 +4,7 @@ var Evolution = function(){
 	this.bestd = null;
 	this.best = null;
 	this.individuals = new Array();
-	this.my 7;
+	this.my = 7;
 	this.rate = 7;
 	this.rho = 3;
 };
@@ -15,7 +15,9 @@ Evolution.prototype.iterate = function(){
 	for (var i = 0;i<100;i++){
 		if(i==0){
 			this.generateArray(this.my);
-			this.evaluate();
+			this.individuals.forEach(function(value,index){
+				value.evaluate();
+			});
 		}
 		var arrNew = new Array();
 		for (var i10 = 0;i10<this.my*this.rate;i10++){
@@ -23,8 +25,11 @@ Evolution.prototype.iterate = function(){
 			for (var i11=0;i11<this.rho;i11++){
 				marriage.push(this.individuals[Math.floor(Math.random()*this.my)]);
 			}
-			var newInd = marriage[Math.floor(Math.random()*3)];
-			newInd.mutateStrategy();
+			var rand = Math.floor(Math.random()*this.rho);
+			var newInd = new Individual(marriage[rand].binary);
+			newInd.kappa = marriage[rand].kappa;
+			newInd.evaluate();
+			newInd.mutateStrategy(marriage[Math.floor(Math.random()*this.rho)].mutationrate);
 			newInd.mutate();
 			arrNew.push(newInd);
 		}
@@ -91,6 +96,7 @@ Evolution.prototype.returnBinary = function(){
 	}
 	return arr.join('');
 }
+
 Evolution.prototype.evaluate = function(){
 	this.individuals.forEach(function(value,index){
 		value.evaluate();
@@ -99,12 +105,12 @@ Evolution.prototype.evaluate = function(){
 Evolution.prototype.selection = function(array){
 	var rangArray = new Array();
 	this.individuals.forEach(function(value,index){
-		if (value.select){
+		if (value.select && value.kappa > 0){
 			rangArray.push(value);
 		}
 	});
 	array.forEach(function(value,index){
-		if (value.select){
+		if (value.select && value.kappa > 0){
 			rangArray.push(value);
 		}
 	});
@@ -112,11 +118,14 @@ Evolution.prototype.selection = function(array){
 	var selArray = rangArray.sort(this.compareForSort);
 	var total = this.calculateTotalRang(selArray.length);
 	var newIndividuals = new Array();
-	for (var i5 = 0;i5<this.rho;i5++){
+	for (var i5 = 0;i5<this.my;i5++){
 		var ind = this.rankBasedSelection(selArray.length,total,Math.random());	
-		newIndividuals.push(new Individual(selArray[ind].binary));
-		newIndividuals[i5].evaluate();
-		newIndividuals[i5].reduceLifetime();
+		var newIndivid = new Individual(selArray[ind].binary);
+		newIndivid.kappa = selArray[ind].kappa;
+		newIndivid.evaluate();
+		newIndivid.reduceLifetime();
+		newIndivid.mutationrate = selArray[ind].mutationrate;
+		newIndividuals.push(newIndivid);
 	}
 	this.individuals = newIndividuals;
 
@@ -134,21 +143,8 @@ Evolution.prototype.recombination = function(){
 	this.individuals[second].binary = substring1 + this.individuals[second].binary.substring(singlepoint,10);
 }
 
-Evolution.prototype.mutateStrategy = function(array){
-	return Math.exp(1/Math.sqrt(2*this.my))*array[Math.floor(Math.random()*3)].mutationrate*Math.exp(1/Math.sqrt(2*Math.sqrt(this.my)));
-}
-
-Evolution.prototype.mutation = function(array){
-	for (var index = 0;index<array.length;index++){
-		var stringArr = array[index].binary.split('');
-		for(var i3 = 0;i3<stringArr.length;i3++){
-			if (Math.random()< array[index].mutationrate){
-				stringArr[i3] == "1"?stringArr[i3]="0":stringArr[i3]="1";
-			}
-		}
-		array[index].binary = stringArr.join('');
-	}
-	return array;
+Evolution.prototype.mutateStrategy = function(mutationrate){
+	return Math.exp(1/Math.sqrt(2*this.my))*mutationrate*Math.exp(1/Math.sqrt(2*Math.sqrt(this.my)));
 }
 
 Evolution.prototype.rankBasedSelection = function(length,total,value){

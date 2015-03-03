@@ -17,6 +17,7 @@ Individual.prototype.toReal = function(){
 Individual.prototype.reduceLifetime = function(){
 	this.kappa = this.kappa - 1;
 }
+
 Individual.prototype.evaluate = function(){
 	this.toReal();
 	this.f = ((Math.PI*Math.pow(this.d,2))/2)+Math.PI*this.d*this.h;
@@ -39,9 +40,11 @@ Individual.prototype.mutate = function(){
 	this.evaluate();
 }
 
-Individual.prototype.mutateStrategy = function(){
-	this.mutationrate = Math.exp(1/Math.sqrt(2*this.my))*array[Math.floor(Math.random()*3)].mutationrate*Math.exp(1/Math.sqrt(2*Math.sqrt(this.my)));
+Individual.prototype.mutateStrategy = function(oldmut){
+	this.mutationrate = oldmut*Math.exp((1/Math.sqrt(2))*this.gaussanRandom());
 }
 
 
-
+Individual.prototype.gaussanRandom = function() {
+    return (Math.random()*2-1)+(Math.random()*2-1)+(Math.random()*2-1);
+}
