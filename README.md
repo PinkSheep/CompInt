@@ -1,5 +1,5 @@
 # CompInt
-direcotry for all the stuff related to the module Computational Intelligence @ ZHAW
+directory for all the stuff related to the module Computational Intelligence @ ZHAW
 
 evolution.js contains a genetic algorithm to determine the best solution to a function
 
